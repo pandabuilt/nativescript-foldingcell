@@ -1,6 +1,6 @@
 import { ElementRef, IterableDiffers } from "@angular/core";
 import { TemplatedItemsComponent } from "@nativescript/angular/directives/templated-items-comp";
-import { FoldingListView } from "nativescript-foldingcell";
+import { FoldingListView } from "../";
 export declare class FoldingListViewComponent extends TemplatedItemsComponent {
     readonly nativeElement: FoldingListView;
     protected templatedItemsView: FoldingListView;
