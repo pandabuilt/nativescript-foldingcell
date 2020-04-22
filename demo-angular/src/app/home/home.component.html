@@ -1,0 +1,83 @@
+<!-- <ActionBar>
+    <Label text="Home"></Label>
+</ActionBar> -->
+
+
+<GridLayout (loaded)="onListLoaded($event)" height="100%">
+
+    <!-- <ListView #listRef [items]="items" (loaded)="onListLoaded($event)">
+        <ng-template> -->
+    <!-- <FoldingListView height="100%" width="100%" verticalAlignment="middle" padding="0" margin="0" backgroundColor="red" [items]="items" (loaded)="onLoaded($event)"> -->
+    <!-- <StackLayout visibility="hidden" padding="0" margin="0" width="100%" backgroundColor="yellow">
+                    <Label text="Front View"></Label>
+                </StackLayout>
+                <StackLayout height="200" padding="0" margin="0" width="100%" backgroundColor="blue">
+                    <Label text="Back View"></Label>
+                </StackLayout> -->
+    <!-- <ng-template> -->
+
+    <!-- <StackLayout height="700" backgroundColor="pink"> -->
+
+
+
+    <!-- </StackLayout> -->
+
+    <!-- <StackLayout padding="0" margin="0">
+                <Label height="500" text="I am front View"></Label>
+                <Label height="800" text="I am Rotated View"></Label>
+            </StackLayout> -->
+
+    <!-- </ng-template> -->
+
+    <!-- </FoldingListView> -->
+    <!-- </ng-template>
+    </ListView> -->
+
+
+    <!-- <FoldingCell verticalAlignment="top" (tap)="onTap($event)" (loaded)="onLoaded($event)">
+        <StackLayout visibility="hidden" width="100%" backgroundColor="red">
+            <Image src="res://logo" height="500" stretch="fill"></Image>
+        </StackLayout>
+        <StackLayout height="200" width="100%" backgroundColor="blue">
+            <Image src="res://icon" height="200" stretch="fill"></Image>
+        </StackLayout>
+    </FoldingCell> -->
+
+    <!-- <FoldingCell verticalAlignment="top" (tap)="onTap($event)" (loaded)="onLoaded($event)">
+        <StackLayout visibility="hidden" width="100%" backgroundColor="yellow">
+            <Image src="res://logo" height="500" stretch="fill"></Image>
+        </StackLayout>
+        <StackLayout height="200" width="100%" backgroundColor="blue">
+            <Image src="res://icon" height="200" stretch="fill"></Image>
+        </StackLayout>
+    </FoldingCell> -->
+
+    <!-- <ScrollView height="800"> -->
+
+    <FoldingListView verticalAlignment="top" height="100%" padding="0" margin="0" backgroundColor="red" [items]="items" (loaded)="onLoaded($event)">
+
+        <ng-template>
+
+            <StackLayout>
+
+                <ForegroundView height="700" backgroundColor="blue">
+
+                </ForegroundView>
+
+                <ContainerView height="300" backgroundColor="green">
+
+                </ContainerView>
+            </StackLayout>
+
+        </ng-template>
+
+    </FoldingListView>
+
+    <!-- </ScrollView> -->
+
+
+
+
+
+
+</GridLayout>
