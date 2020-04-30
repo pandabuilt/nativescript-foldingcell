@@ -1,60 +1,34 @@
-import { ContainerView } from '@nativescript/core/ui/core/view';
 import {
     AfterContentInit,
     ContentChild,
-    Directive,
     DoCheck,
     ElementRef,
     EmbeddedViewRef,
     EventEmitter,
-    Host,
-    Inject,
     InjectionToken,
     Input,
     IterableDiffer,
     IterableDiffers,
     OnDestroy,
-    OnInit,
     Output,
     TemplateRef,
     ViewChild,
     ViewContainerRef,
     ɵisListLikeIterable as isListLikeIterable
 } from '@angular/core';
-import { ItemEventData, ItemsSource } from '@nativescript/core/ui/list-view';
-import { parse } from '@nativescript/core/ui/builder';
-import { isIOS, KeyedTemplate, View } from '@nativescript/core/ui/core/view';
-import { EventData, LayoutBase, Template } from '@nativescript/core/ui/layouts/layout-base';
+import { ItemEventData } from '@nativescript/core/ui/list-view';
+import { KeyedTemplate, View } from '@nativescript/core/ui/core/view';
+import { LayoutBase } from '@nativescript/core/ui/layouts/layout-base';
 import { ObservableArray } from '@nativescript/core/data/observable-array';
 import { profile } from '@nativescript/core/profiling';
 
-import { getSingleViewRecursive, InvisibleNode, registerElement } from '@nativescript/angular/element-registry';
+import { getSingleViewRecursive } from '@nativescript/angular/element-registry';
 import { isEnabled as isLogEnabled } from '@nativescript/core/trace';
-import { isBlank } from '@nativescript/angular/lang-facade';
-import { FoldingListView } from '../';
+import { FoldingListView } from '../foldingcell';
 
-
-
-import {listViewLog,listViewError} from "@nativescript/angular/trace";
+import { listViewLog } from "@nativescript/angular/trace";
 
 const NG_VIEW = '_ngViewRef';
-
-
-export interface PagerTemplatedItemsView {
-    items: any[] | ItemsSource;
-    itemTemplate: string | Template;
-    itemTemplates?: string | Array<KeyedTemplate>;
-
-    refresh(): void;
-
-    on(event: 'itemLoading', callback: (args: ItemEventData) => void, thisArg?: any);
-
-    on(event: 'itemDisposing', callback: (args: ItemEventData) => void, thisArg?: any);
-
-    off(event: 'itemLoading', callback: (args: EventData) => void, thisArg?: any);
-
-    off(event: 'itemDisposing', callback: (args: EventData) => void, thisArg?: any);
-}
 
 export class ItemContext {
     constructor(
@@ -82,13 +56,13 @@ export abstract class TemplatedItemsComponent implements DoCheck, OnDestroy, Aft
     protected _differ: IterableDiffer<KeyedTemplate>;
     protected _templateMap: Map<string, KeyedTemplate>;
 
-    @ViewChild('loader', {read: ViewContainerRef, static: false})
+    @ViewChild('loader', { read: ViewContainerRef, static: false })
     loader: ViewContainerRef;
 
     @Output()
     public setupItemView = new EventEmitter<SetupItemViewArgs>();
 
-    @ContentChild(TemplateRef, { static: false})
+    @ContentChild(TemplateRef, { static: false })
     itemTemplateQuery: TemplateRef<any>;
 
     itemTemplate: TemplateRef<any>;
@@ -113,18 +87,6 @@ export abstract class TemplatedItemsComponent implements DoCheck, OnDestroy, Aft
         this.templatedItemsView.items = this._items;
     }
 
-
-    // ngAfterViewInit() {
-    //     if (!isBlank(this._selectedIndex)) {
-    //         setTimeout(() => {
-    //             if (isIOS) {
-    //                 this.templatedItemsView.scrollToIndexAnimated(this._selectedIndex, false);
-    //             }
-    //             this.templatedItemsView.selectedIndex = this._selectedIndex;
-    //         });
-    //     }
-    // }
-
     constructor(_elementRef: ElementRef, private _iterableDiffers: IterableDiffers) {
         this.templatedItemsView = _elementRef.nativeElement;
 
@@ -142,17 +104,17 @@ export abstract class TemplatedItemsComponent implements DoCheck, OnDestroy, Aft
     }
 
 
-onTap(args){
-return args;
-}
-
-onItemTap(args){
-    return args;
-    }
-    
-    onLoadMoreItems(args){
+    onTap(args) {
         return args;
-        }
+    }
+
+    onItemTap(args) {
+        return args;
+    }
+
+    onLoadMoreItems(args) {
+        return args;
+    }
 
 
     ngOnDestroy() {
@@ -168,13 +130,8 @@ onItemTap(args){
 
     private setItemTemplates() {
         if (!this.items) return;
-        // The itemTemplateQuery may be changed after list items are added that contain <template> inside,
-        // so cache and use only the original template to avoid errors.
+
         this.itemTemplate = this.itemTemplateQuery;
-
-        console.log('Inside Temp Component:::',  this.itemTemplate)
-
-    //  var view=   parse(this.itemTemplate, this);
 
         if (this._templateMap) {
             if (isLogEnabled()) {
@@ -225,8 +182,7 @@ onItemTap(args){
             }
 
             viewRef = args.view[NG_VIEW];
-            // Getting angular view from original element (in cases when ProxyViewContainer
-            // is used NativeScript internally wraps it in a StackLayout)
+
             if (!viewRef && args.view instanceof LayoutBase && args.view.getChildrenCount() > 0) {
                 viewRef = args.view.getChildAt(0)[NG_VIEW];
             }
@@ -247,44 +203,11 @@ onItemTap(args){
         }
 
         console.log('ViewRef:::', viewRef);
-        
+
         this.setupViewRef(viewRef, currentItem, index);
 
         this.detectChangesOnChild(viewRef, index);
     }
-
-    // @profile
-    // public onItemDisposing(args: ItemEventData) {
-    //     if (!args.view) {
-    //         return;
-    //     }
-    //     let viewRef: EmbeddedViewRef<ItemContext>;
-
-    //     if (args.view) {
-    //         if (isLogEnabled()) {
-    //             PagerLog(`onItemDisposing: ${index} - Removing angular view`);
-    //         }
-
-    //         viewRef = args.view[NG_VIEW];
-    //         // Getting angular view from original element (in cases when ProxyViewContainer
-    //         // is used NativeScript internally wraps it in a StackLayout)
-    //         if (!viewRef && args.view instanceof LayoutBase && args.view.getChildrenCount() > 0) {
-    //             viewRef = args.view.getChildAt(0)[NG_VIEW];
-    //         }
-
-    //         if (!viewRef && isLogEnabled()) {
-    //             PagerError(`ViewReference not found for item ${index}. View disposing is not working`);
-    //         }
-    //     }
-
-    //     if (viewRef) {
-    //         if (isLogEnabled()) {
-    //             PagerLog(`onItemDisposing: ${index} - Disposing view reference`);
-    //         }
-
-    //         viewRef.destroy();
-    //     }
-    // }
 
     public setupViewRef(viewRef: EmbeddedViewRef<ItemContext>, data: any, index: number): void {
         const context = viewRef.context;
@@ -340,9 +263,6 @@ onItemTap(args){
     }
 }
 
-
-
-
 export interface ComponentView {
     rootNodes: Array<any>;
 
@@ -361,61 +281,3 @@ export function getItemViewRoot(
 export const TEMPLATED_ITEMS_COMPONENT = new InjectionToken<TemplatedItemsComponent>(
     'TemplatedItemsComponent'
 );
-
-// @Directive({
-//     selector: '[pagerItem]'
-// })
-// export class PagerItemDirective implements OnInit {
-//     private item: PagerItem;
-
-//     constructor(
-//         private templateRef: TemplateRef<any>,
-//         @Inject(TEMPLATED_ITEMS_COMPONENT)
-//         @Host()
-//         private owner: TemplatedItemsComponent,
-//         private viewContainer: ViewContainerRef
-//     ) {
-//     }
-
-//     private ensureItem() {
-//         if (!this.item) {
-//             this.item = new PagerItem();
-//         }
-//     }
-
-//     private applyConfig() {
-//         this.ensureItem();
-//     }
-
-//     ngOnInit() {
-//         this.applyConfig();
-
-//         const viewRef = this.viewContainer.createEmbeddedView(this.templateRef);
-//         // Filter out text nodes and comments
-//         const realViews = viewRef.rootNodes.filter(node => !(node instanceof InvisibleNode));
-
-//         if (realViews.length > 0) {
-//             const view = realViews[0];
-//             this.item.addChild(view);
-//             this.owner.nativeElement._addChildFromBuilder('PagerItem', this.item);
-//         }
-//     }
-// }
-
-// @Directive({selector: '[pagerTemplateKey]'})
-// export class TemplateKeyDirective {
-//     constructor(
-//         private templateRef: TemplateRef<any>,
-//         @Inject(TEMPLATED_ITEMS_COMPONENT)
-//         @Host()
-//         private comp: TemplatedItemsComponent
-//     ) {
-//     }
-
-//     @Input()
-//     set pagerTemplateKey(value: any) {
-//         if (this.comp && this.templateRef) {
-//             this.comp.registerTemplate(value, this.templateRef);
-//         }
-//     }
-// }
