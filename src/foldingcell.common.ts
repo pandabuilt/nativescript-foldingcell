@@ -31,6 +31,7 @@ export interface ItemsSource {
     getItem(index: number): any;
 }
 
+
 @CSSType('FoldingListView')
 export abstract class FoldingListViewBase extends View {
 
@@ -271,7 +272,6 @@ export const itemTemplatesProperty = new Property<FoldingListViewBase, string | 
     }
 });
 itemTemplatesProperty.register(FoldingListViewBase);
-
 
 var defaultFoldCounts;
 export var foldsCountProperty;

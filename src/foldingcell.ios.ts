@@ -1,4 +1,4 @@
-/// <reference path="references.d.ts" />
+/// <reference path="../../node_modules/tns-platform-declarations/ios.d.ts" />
 
 import { View } from '@nativescript/core/ui/core/view';
 import { Color } from '@nativescript/core/ui/core/view';
@@ -11,6 +11,8 @@ import { ImageSource } from "@nativescript/core/image-source/image-source";
 import { Image } from "@nativescript/core/ui/image/image";
 import { defaultFoldedRowHeight as DEFAULT_HEIGHT } from './foldingcell.common';
 import { isEnabled, write, categories } from "@nativescript/core/trace";
+
+export * from "./foldingcell.common";
 
 export const infinity = layout.makeMeasureSpec(0, layout.UNSPECIFIED);
 
@@ -56,9 +58,8 @@ export class FoldingListView extends FoldingListViewBase {
 
     constructor() {
         super();
-
         this.nativeViewProtected = this._ios = UITableView.new();
-        this._ios.registerClassForCellReuseIdentifier(FoldingListViewCell.class(), this._defaultTemplate.key);
+        this._ios.registerClassForCellReuseIdentifier((FoldingListViewCell as any).class(), this._defaultTemplate.key);
         this._ios.separatorColor = UIColor.clearColor;
         this._ios.rowHeight = UITableViewAutomaticDimension;
         this._ios.estimatedRowHeight = DEFAULT_HEIGHT;
@@ -102,6 +103,7 @@ export class FoldingListView extends FoldingListViewBase {
     }
 
     scrollToIndex(index: number, animated: boolean = true) {
+
         if (!this.ios) {
             return;
         }
@@ -121,6 +123,7 @@ export class FoldingListView extends FoldingListViewBase {
     };
 
     refresh() {
+
         this._map.forEach((view, nativeView) => {
             if (!(view.foreground.bindingContext instanceof Observable)) {
                 view.foreground.bindingContext = null;
@@ -147,6 +150,7 @@ export class FoldingListView extends FoldingListViewBase {
     };
 
     _onFoldedRowHeightPropertyChanged(oldValue: Length, newValue: number) {
+
         var value = layout.toDeviceIndependentPixels(this._effectiveFoldedRowHeight);
         if (value > 0) {
             this.ios.estimatedRowHeight = value;
@@ -159,21 +163,6 @@ export class FoldingListView extends FoldingListViewBase {
     }
 
     _onRowHeightPropertyChanged(oldValue, newValue) {
-        var value = layout.toDeviceIndependentPixels(this._effectiveRowHeight);
-        var nativeView = this.ios;
-        if (value < 0) {
-            nativeView.rowHeight = UITableViewAutomaticDimension;
-            nativeView.estimatedRowHeight = DEFAULT_HEIGHT;
-            this._delegate = UITableViewRowHeightDelegateImpl.initWithOwner(new WeakRef(this));
-        } else {
-            nativeView.rowHeight = value;
-            nativeView.estimatedRowHeight = value;
-            this._delegate = UITableViewRowHeightDelegateImpl.initWithOwner(new WeakRef(this));
-        }
-        if (this.isLoaded) {
-            nativeView.delegate = this._delegate;
-        }
-        // super._onRowHeightPropertyChanged(oldValue, newValue);
     };
 
     requestLayout(): void {
@@ -183,6 +172,7 @@ export class FoldingListView extends FoldingListViewBase {
     };
 
     measure(widthMeasureSpec: number, heightMeasureSpec: number): void {
+
         this.widthMeasureSpec = widthMeasureSpec;
         var changed = (this as any)._setCurrentMeasureSpecs(widthMeasureSpec, heightMeasureSpec);
         super.measure(widthMeasureSpec, heightMeasureSpec);
@@ -192,6 +182,7 @@ export class FoldingListView extends FoldingListViewBase {
     };
 
     onMeasure(widthMeasureSpec: number, heightMeasureSpec: number): void {
+
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
         this._map.forEach((cellView, listViewCell) => {
             View.measureChild(this, cellView.foreground, (cellView.foreground as any)._currentWidthMeasureSpec, (cellView.foreground as any)._currentHeightMeasureSpec);
@@ -200,6 +191,7 @@ export class FoldingListView extends FoldingListViewBase {
     };
 
     onLayout(left: number, top: number, right: number, bottom: number): void {
+
         super.onLayout(left, top, right, bottom);
         this._map.forEach((cellView, listViewCell) => {
             var width = layout.getMeasureSpecSize(this.widthMeasureSpec);
@@ -220,7 +212,6 @@ export class FoldingListView extends FoldingListViewBase {
         var index = indexPath.row;
 
         try {
-
             this._preparingCell = true;
             var foregroundView = cell.foregroundViewTNS;
             var containerView_1 = cell.containerViewTNS;
@@ -367,6 +358,7 @@ export class FoldingListView extends FoldingListViewBase {
     };
 
     _removeContainer(cell: FoldingListViewCell): void {
+
         var foregroundView = cell.foregroundViewTNS;
         var containerView = cell.containerViewTNS;
         if (foregroundView.parent) {
@@ -394,19 +386,22 @@ export class FoldingListView extends FoldingListViewBase {
     };
 
     public [separatorColorProperty.setNative](value: Color | UIColor) {
+
         this.ios.separatorColor = value instanceof Color ? value.ios : value;
     };
 
     public isItemAtIndexVisible(index: number): boolean {
+
         var indexes: NSIndexPath[] = Array.from(this.ios.indexPathsForVisibleRows);
         return indexes.some((visIndex) => { return visIndex.row === index; });
     };
 
     public [backViewColorProperty.getDefault](): UIColor {
-        return (FoldingListViewCell.alloc().init()).backViewColor;
+        return ((FoldingListViewCell.alloc() as any).init()).backViewColor;
     };
 
     public [backViewColorProperty.setNative](value) {
+
         var actualColor = value instanceof Color ? value.ios : value;
         this._map.forEach((view, cell) => { cell.backViewColor = actualColor; });
     };
@@ -416,10 +411,11 @@ export class FoldingListView extends FoldingListViewBase {
     };
 
     public [itemTemplatesProperty.setNative](value: KeyedTemplate[]) {
+
         this._itemTemplatesInternal = new Array<KeyedTemplate>(this._defaultTemplate);
         if (value) {
             for (var i = 0, length_1 = value.length; i < length_1; i++) {
-                this.ios.registerClassForCellReuseIdentifier(FoldingListViewCell.class(), value[i].key);
+                this.ios.registerClassForCellReuseIdentifier((FoldingListViewCell as any).class(), value[i].key);
             }
             this._itemTemplatesInternal = this._itemTemplatesInternal.concat(value);
         }
@@ -430,12 +426,12 @@ export class FoldingListView extends FoldingListViewBase {
         return View.measureChild(this, view, this.widthMeasureSpec - (view._constraintLeft + view._constraintRight), measuredHeight);
     };
 
-
     public _layoutConstraintedView(view: ConstraintedView, width: number, height: number) {
         View.layoutChild(this, view, 0, 0, width - (view._constraintLeft + view._constraintRight), height - view._constraintTop);
     };
 
     public _layoutCell(cellView: FoldingCellView): FoldingCellHeight {
+
         if (cellView) {
             var measureForegroundSize = this._measureConstraintedChild(cellView.foreground, layout.makeMeasureSpec(this._effectiveFoldedRowHeight, layout.EXACTLY));
             var measuredContainerSize = this._measureConstraintedChild(cellView.container, infinity);
@@ -453,6 +449,7 @@ export class FoldingListView extends FoldingListViewBase {
     };
 
     _prepareConstrainedView(view: ConstraintedView) {
+
         view._constraintTop = PercentLength.toDevicePixels(view.marginTop);
         view._constraintLeft = PercentLength.toDevicePixels(view.marginLeft) + this.effectivePaddingLeft;
         view._constraintBottom = PercentLength.toDevicePixels(view.marginBottom);
@@ -469,14 +466,10 @@ export class FoldingListViewCell extends FoldingCell {
     public containerViewWeakRef: WeakRef<ConstraintedView>;
     private _containerViewHeightConstraints: NSArray<NSLayoutConstraint>;
 
-    public static new(): FoldingListViewCell {
-        var cell = <FoldingListViewCell>FoldingCell.new();
-        return cell;
-    };
-
     public static initWithEmptyBackground(): FoldingListViewCell {
-        var cell = FoldingListViewCell.new();
-        cell.backgroundColor = UIColor.purpleColor;
+
+        var cell = <FoldingListViewCell>FoldingListViewCell.new();
+        (cell as any).backgroundColor = UIColor.purpleColor;
         return cell;
     };
 
@@ -493,13 +486,14 @@ export class FoldingListViewCell extends FoldingCell {
     }
 
     public initWithStyleReuseIdentifier(style, reuseIdentifier) {
+
         var cell = super.initWithStyleReuseIdentifier(style, reuseIdentifier);
         cell.backgroundColor = null;
         return cell;
     };
 
-
     public willMoveToSuperview(newSuperview: UIView): void {
+
         const parent = (this.foregroundViewTNS ? this.foregroundViewTNS.parent as FoldingListView : null);
 
         if (parent && !newSuperview) {
@@ -509,8 +503,8 @@ export class FoldingListViewCell extends FoldingCell {
 
     public resetNativeViews(cellHeight: FoldingCellHeight) {
 
-        for (var loop = this.contentView.subviews.count - 1; loop >= 0; loop--) {
-            this.contentView.subviews.objectAtIndex(loop).removeFromSuperview();
+        for (var loop = (this as any).contentView.subviews.count - 1; loop >= 0; loop--) {
+            (this as any).contentView.subviews.objectAtIndex(loop).removeFromSuperview();
         }
 
         this._addContainerView(cellHeight);
@@ -520,6 +514,7 @@ export class FoldingListViewCell extends FoldingCell {
 
 
     public resetContainerViewHeightContraint(newHeight: FoldingCellHeight) {
+
         var containerViewHeight = newHeight.container;
 
         var topConstraintValue = layout.toDeviceIndependentPixels(this.containerViewTNS._constraintTop);
@@ -557,11 +552,12 @@ export class FoldingListViewCell extends FoldingCell {
     };
 
     public _initForegroundView(height: number) {
+
         var topConstraintValue = layout.toDeviceIndependentPixels(this.foregroundViewTNS._constraintTop);
-        var foregroundView = RotatedView.alloc().initWithFrame(CGRectZero);
+        var foregroundView = (RotatedView.alloc() as any).initWithFrame(CGRectZero);
         foregroundView.translatesAutoresizingMaskIntoConstraints = false;
         foregroundView.addSubview(this.foregroundViewTNS.nativeViewProtected);
-        this.contentView.addSubview(foregroundView);
+        (this as any).contentView.addSubview(foregroundView);
         NSLayoutConstraint.activateConstraints(NSLayoutConstraint.constraintsWithVisualFormatOptionsMetricsViews("V:[layer(==" + (layout.toDeviceIndependentPixels(height) - topConstraintValue) + ")]", 0, null, { layer: foregroundView } as any));
         NSLayoutConstraint.activateConstraints(NSLayoutConstraint.constraintsWithVisualFormatOptionsMetricsViews("H:|-" + layout.toDeviceIndependentPixels(this.foregroundViewTNS._constraintLeft) + "-[layer]-" + layout.toDeviceIndependentPixels(this.foregroundViewTNS._constraintRight) + "-|", 0, null, { layer: foregroundView } as any));
         var top = NSLayoutConstraint.constraintsWithVisualFormatOptionsMetricsViews("V:|-" + topConstraintValue + "-[layer]", 0, null, { layer: foregroundView } as any);
@@ -571,11 +567,12 @@ export class FoldingListViewCell extends FoldingCell {
     };
 
     _initContainerView(height: FoldingCellHeight) {
+
         var topConstraintValue = layout.toDeviceIndependentPixels(this.containerViewTNS._constraintTop);
         var containerView = UIView.alloc().initWithFrame(CGRectZero);
         containerView.translatesAutoresizingMaskIntoConstraints = false;
         containerView.addSubview(this.containerViewTNS.nativeViewProtected);
-        this.contentView.addSubview(containerView);
+        (this as any).contentView.addSubview(containerView);
         this.containerView = containerView;
         this.resetContainerViewHeightContraint(height);
         NSLayoutConstraint.activateConstraints(NSLayoutConstraint.constraintsWithVisualFormatOptionsMetricsViews("H:|-" + layout.toDeviceIndependentPixels(this.containerViewTNS._constraintLeft) + "-[layer]-" + layout.toDeviceIndependentPixels(this.containerViewTNS._constraintRight) + "-|", 0, null, { layer: containerView } as any));
@@ -589,7 +586,7 @@ export class FoldingListViewCell extends FoldingCell {
 
         var foregroundViewHeight = height.foreground
         var topConstraintValue = layout.toDeviceIndependentPixels(10);
-        var foregroundView = RotatedView.alloc().initWithFrame(CGRectZero);
+        var foregroundView = (RotatedView.alloc() as any).initWithFrame(CGRectZero);
         foregroundView.translatesAutoresizingMaskIntoConstraints = false;
         foregroundView.backgroundColor = UIColor.colorWithRedGreenBlueAlpha(208, 72, 30, 1)
         foregroundView.layer.cornerRadius = 2
@@ -599,14 +596,13 @@ export class FoldingListViewCell extends FoldingCell {
 
         foregroundView.addSubview(this.foregroundViewTNS.nativeViewProtected);
 
-        this.contentView.addSubview(foregroundView);
+        (this as any).contentView.addSubview(foregroundView);
         NSLayoutConstraint.activateConstraints(NSLayoutConstraint.constraintsWithVisualFormatOptionsMetricsViews("V:[layer(==" + (layout.toDeviceIndependentPixels(foregroundViewHeight) - topConstraintValue) + ")]", 0, null, { layer: foregroundView } as any));
         NSLayoutConstraint.activateConstraints(NSLayoutConstraint.constraintsWithVisualFormatOptionsMetricsViews("H:|-" + layout.toDeviceIndependentPixels(10) + "-[layer]-" + layout.toDeviceIndependentPixels(10) + "-|", 0, null, { layer: foregroundView } as any));
         var top = NSLayoutConstraint.constraintsWithVisualFormatOptionsMetricsViews("V:|-" + topConstraintValue + "-[layer]", 0, null, { layer: foregroundView } as any);
         NSLayoutConstraint.activateConstraints(top);
         this.foregroundView = foregroundView;
         this.foregroundViewTop = top.objectAtIndex(0);
-
     };
 
     public _addContainerView(height: FoldingCellHeight) {
@@ -622,7 +618,7 @@ export class FoldingListViewCell extends FoldingCell {
         containerView.userInteractionEnabled = true;
         containerView.addSubview(this.containerViewTNS.nativeViewProtected);
 
-        this.contentView.addSubview(containerView);
+        (this as any).contentView.addSubview(containerView);
         this.containerView = containerView;
         this.resetContainerViewHeightContraint(height);
 
@@ -632,28 +628,25 @@ export class FoldingListViewCell extends FoldingCell {
         this.containerViewTop = top.objectAtIndex(0);
         containerView.layoutIfNeeded();
     };
-
 }
 
-@ObjCClass([UITableViewDelegate])
-export class FoldingListViewDelegate extends NSObject implements UITableViewDelegate {
+
+@ObjCClass(UITableViewDelegate)
+class FoldingListViewDelegate extends NSObject implements UITableViewDelegate {
+
+
+    public static initWithOwner(owner: WeakRef<FoldingListView>): FoldingListViewDelegate {
+        const delegate = FoldingListViewDelegate.new() as FoldingListViewDelegate;
+        delegate._owner = owner;
+        delegate._measureCellMap = new Map();
+        return delegate;
+    }
 
     private _owner: WeakRef<FoldingListView>;
     _measureCellMap;
 
-    public static new(): FoldingListViewDelegate {
-        var delegate = <FoldingListViewDelegate>(UITableViewDelegate as any).new();
-        return delegate;
-    }
-
-    public static initWithOwner(owner: WeakRef<FoldingListView>): FoldingListViewDelegate {
-        var delegate = FoldingListViewDelegate.new();
-        delegate._owner = owner;
-        delegate._measureCellMap = new Map();
-        return delegate;
-    };
-
     public tableViewHeightForRowAtIndexPath(tableView: UITableView, indexPath: NSIndexPath) {
+
         var owner = (this._owner as any).get();
         var cellHeight = owner.getHeight(indexPath.row);
         if (!cellHeight) {
@@ -663,6 +656,7 @@ export class FoldingListViewDelegate extends NSObject implements UITableViewDele
     };
 
     public tableViewWillSelectRowAtIndexPath = function (tableView: UITableView, indexPath: NSIndexPath) {
+
         var cell = tableView.cellForRowAtIndexPath(indexPath) as FoldingListViewCell;
         var owner = this._owner.get();
         if (owner) {
@@ -672,6 +666,7 @@ export class FoldingListViewDelegate extends NSObject implements UITableViewDele
     };
 
     public tableViewDidSelectRowAtIndexPath(tableView: UITableView, indexPath: NSIndexPath) {
+
         var _this = this;
         var cell = <FoldingListViewCell>tableView.cellForRowAtIndexPath(indexPath);
         var owner = (this._owner as any).get();
@@ -739,32 +734,29 @@ export class FoldingListViewDelegate extends NSObject implements UITableViewDele
             owner.ios.endUpdates();
         }, null);
     };
-
 }
 
+@ObjCClass(UITableViewDataSource)
+class FoldingListViewDataSource extends NSObject implements UITableViewDataSource {
 
-@ObjCClass([UITableViewDataSource])
-export class FoldingListViewDataSource extends NSObject implements UITableViewDataSource {
-
-    _owner: WeakRef<FoldingListView>;
-
-    public static new(): FoldingListViewDataSource {
-        var delegate = <FoldingListViewDataSource>(UITableViewDataSource as any).new();
-        return delegate;
-    }
 
     public static initWithOwner(owner: WeakRef<FoldingListView>): FoldingListViewDataSource {
-        var delegate = FoldingListViewDataSource.new();
-        delegate._owner = owner;
-        return delegate;
-    };
+
+        const dataSource = FoldingListViewDataSource.new() as FoldingListViewDataSource;
+        dataSource._owner = owner;
+        return dataSource;
+    }
+
+    private _owner: WeakRef<FoldingListView>;
 
     public tableViewNumberOfRowsInSection(tableView: UITableView, section: number) {
+
         var owner = (this._owner as any).get();
         return (owner && owner.items) ? owner.items.length : 0;
     };
 
     public tableViewCellForRowAtIndexPath(tableView: UITableView, indexPath: NSIndexPath): UITableViewCell {
+
         var owner = (this._owner as any).get();
         var cell;
         if (owner) {
@@ -788,55 +780,8 @@ export class FoldingListViewDataSource extends NSObject implements UITableViewDa
     };
 }
 
-@ObjCClass([UITableViewDelegate])
-export class UITableViewRowHeightDelegateImpl extends NSObject implements UITableViewDelegate {
-
-    _owner: WeakRef<FoldingListView>;
-
-    public static new(): UITableViewRowHeightDelegateImpl {
-        var delegate = <UITableViewRowHeightDelegateImpl>(UITableViewDelegate as any).new();
-        return delegate;
-    }
-
-    public static initWithOwner(owner: WeakRef<FoldingListView>): UITableViewRowHeightDelegateImpl {
-        var delegate = UITableViewRowHeightDelegateImpl.new();
-        delegate._owner = owner;
-        return delegate;
-    };
-
-    public tableViewWillDisplayCellForRowAtIndexPath(tableView: UITableView, cell: UITableViewCell, indexPath: NSIndexPath) {
-        var owner = (this._owner as any).get();
-        if (owner && (indexPath.row === owner.items.length - 1)) {
-            owner.notify({ eventName: LOADMOREITEMS, object: owner });
-        }
-    };
-
-    public tableViewWillSelectRowAtIndexPath(tableView: UITableView, indexPath: NSIndexPath) {
-        var cell = tableView.cellForRowAtIndexPath(indexPath) as FoldingListViewCell;
-        var owner = (this._owner as any).get();
-        if (owner) {
-            notifyForItemAtIndex(owner, cell, cell.view, ITEMTAP, indexPath);
-        }
-
-        return indexPath;
-    };
-
-    public tableViewDidSelectRowAtIndexPath(tableView: UITableView, indexPath: NSIndexPath) {
-        tableView.deselectRowAtIndexPathAnimated(indexPath, true);
-        return indexPath;
-    };
-
-    public tableViewHeightForRowAtIndexPath(tableView: UITableView, indexPath: NSIndexPath) {
-        var owner = (this._owner as any).get();
-        if (!owner) {
-            return tableView.estimatedRowHeight;
-        }
-        return layout.toDeviceIndependentPixels(owner._effectiveRowHeight);
-    };
-
-}
-
 export function notifyForItemAtIndex(listView, cell, view, eventName, indexPath) {
+
     var args = { eventName: eventName, object: listView, index: indexPath.row, view: view, ios: cell, android: undefined };
     listView.notify(args);
     return args;

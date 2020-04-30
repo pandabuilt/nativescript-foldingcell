@@ -7,7 +7,6 @@
         "noLib": false,
         "emitDecoratorMetadata": true,
         "experimentalDecorators": true,
-        "skipLibCheck": true,
         "lib": ["es6", "dom"],
         "sourceMap": true,
         "pretty": true,
@@ -20,8 +19,15 @@
         "noImplicitUseStrict": false,
         "noFallthroughCasesInSwitch": true
     },
+    "include": [
+        "**/*.ts",	
+        "!*.d.ts",
+    ],
     "exclude": [
         "node_modules"
     ],
-    "compileOnSave": false
+    "compileOnSave": false,	
+    "angularCompilerOptions": {	
+        "skipTemplateCodegen": true	
+    }
 }

@@ -1,9 +1,14 @@
+/// <reference path="../../node_modules/tns-platform-declarations/android.d.ts" />
+/// <reference path="./typings/com.ramotion.foldingcell.d.ts" />
+
 import { Image } from '@nativescript/core/ui/image/image';
 import { ImageSource } from '@nativescript/core/image-source/image-source';
 import { KeyedTemplate } from '@nativescript/core/ui/core/view';
 import { FoldingListViewBase, separatorColorProperty, itemTemplatesProperty } from './foldingcell.common';
 import { Observable, paddingTopProperty, paddingRightProperty, paddingBottomProperty, paddingLeftProperty, Color, layout, PercentLength, View } from 'tns-core-modules/ui/page/page';
 import { StackLayout } from "@nativescript/core/ui/layouts/stack-layout/stack-layout"
+
+export * from "./foldingcell.common";
 
 export interface MixedView {
     foreground: View;
@@ -28,12 +33,14 @@ export function initializeItemClickListener() {
 @Interfaces([android.widget.AdapterView.OnItemClickListener])
 export class ItemClickListenerImpl extends java.lang.Object implements android.widget.AdapterView.OnItemClickListener {
 
+   
     constructor(public owner: FoldingListView) {
         super();
         return global.__native(this);
     }
 
     public onItemClick<T extends android.widget.Adapter>(parent: android.widget.AdapterView<T>, convertView: android.view.View, index: number, id: number) {
+
         var isExpandedIn = this.owner._getIsCellExpandedIn(index);
         var cell = convertView as com.ramotion.foldingcell.FoldingCell;
         var cellView = this.owner._realizedItems.get(cell);
@@ -55,6 +62,7 @@ export class ItemClickListenerImpl extends java.lang.Object implements android.w
     }
 
     public _toggleCell(cell: com.ramotion.foldingcell.FoldingCell, index: number) {
+
         var isExpandedIn = this.owner._getIsCellExpandedIn(index);
         if (this.owner.toggleMode && !isExpandedIn) {
             var expandedIndex_1 = this.owner._cellExpanded.findIndex((value) => { return value; });
@@ -79,11 +87,11 @@ export class ItemClickListenerImpl extends java.lang.Object implements android.w
 
 export class FoldingListView extends FoldingListViewBase {
 
+
     public nativeViewProtected: android.widget.ListView;
     public _realizedItems: Map<com.ramotion.foldingcell.FoldingCell, FoldingCellView>;
     public _realizedTemplates: Map<string, Map<android.view.View, MixedView>>;
     public _androidViewId: number;
-
 
     constructor() {
         super();
@@ -97,6 +105,7 @@ export class FoldingListView extends FoldingListViewBase {
     }
 
     public createNativeView(): android.widget.ListView {
+
         initializeItemClickListener();
         var listView = new android.widget.ListView(this._context);
         listView.setDescendantFocusability(android.view.ViewGroup.FOCUS_AFTER_DESCENDANTS);
@@ -113,7 +122,9 @@ export class FoldingListView extends FoldingListViewBase {
         (listView as any).itemClickListener = itemClickListener;
         return listView;
     };
+
     public initNativeView() {
+
         super.initNativeView();
         super.updateEffectiveFoldedRowHeight();
         var nativeView = this.nativeViewProtected;
@@ -128,6 +139,7 @@ export class FoldingListView extends FoldingListViewBase {
     };
 
     public disposeNativeView() {
+
         var nativeView = this.nativeViewProtected;
         nativeView.setAdapter(null);
         (nativeView as any).itemClickListener.owner = null;
@@ -137,12 +149,13 @@ export class FoldingListView extends FoldingListViewBase {
     };
 
     public onLoaded() {
+
         super.onLoaded();
         this.requestLayout();
     };
 
-
     public refresh() {
+
         var nativeView = this.nativeViewProtected;
         if (!nativeView || !nativeView.getAdapter()) {
             return;
@@ -158,8 +171,8 @@ export class FoldingListView extends FoldingListViewBase {
         (nativeView.getAdapter() as android.widget.BaseAdapter).notifyDataSetChanged();
     };
 
-
     public scrollToIndex(index: number, animated: boolean = true) {
+     
         var nativeView = this.nativeViewProtected;
         if (nativeView) {
             if (animated) {
@@ -171,6 +184,7 @@ export class FoldingListView extends FoldingListViewBase {
     };
 
     public eachChildView(callback: (child: View) => boolean): void {
+      
         var performCallback = (view) => {
             if (view.parent instanceof FoldingListView) {
                 callback(view);
@@ -186,6 +200,7 @@ export class FoldingListView extends FoldingListViewBase {
     };
 
     public isItemAtIndexVisible(index: number): boolean {
+     
         var nativeView = this.nativeViewProtected;
         var start = nativeView.getFirstVisiblePosition();
         var end = nativeView.getLastVisiblePosition();
@@ -225,6 +240,7 @@ export class FoldingListView extends FoldingListViewBase {
     };
 
     public [separatorColorProperty.getDefault]() {
+        
         var nativeView = this.nativeViewProtected;
         return {
             dividerHeight: nativeView.getDividerHeight(),
@@ -233,6 +249,7 @@ export class FoldingListView extends FoldingListViewBase {
     };
 
     public [separatorColorProperty.setNative](value: any): void {
+     
         var nativeView = this.nativeViewProtected;
         if (value instanceof Color) {
             nativeView.setDivider(new android.graphics.drawable.ColorDrawable(value.android));
@@ -248,6 +265,7 @@ export class FoldingListView extends FoldingListViewBase {
     };
 
     public [itemTemplatesProperty.setNative](value: KeyedTemplate[]) {
+     
         this._itemTemplatesInternal = new Array<KeyedTemplate>(this._defaultTemplate);
         if (value) {
             this._itemTemplatesInternal = this._itemTemplatesInternal.concat(value);
@@ -257,6 +275,7 @@ export class FoldingListView extends FoldingListViewBase {
     };
 
     public clearRealizedCells(): void {
+       
         var _this = this;
         var removeView = (view) => {
             if (view.parent) {
@@ -274,6 +293,7 @@ export class FoldingListView extends FoldingListViewBase {
     };
 
     public _setPadding(newPadding: { top?: number, right?: number, bottom?: number, left?: number }) {
+   
         var nativeView = this.nativeView;
         var padding = {
             top: nativeView.getPaddingTop(),
@@ -290,6 +310,7 @@ export class FoldingListView extends FoldingListViewBase {
 var FoldingListViewAdapterClass;
 
 export function ensureFoldingListViewAdapterClass() {
+  
     if (FoldingListViewAdapterClass) {
         return;
     }
@@ -298,6 +319,7 @@ export function ensureFoldingListViewAdapterClass() {
 }
 
 export class FoldingListViewAdapter extends android.widget.BaseAdapter {
+
 
     constructor(public owner: FoldingListView) {
         super();
@@ -310,6 +332,7 @@ export class FoldingListViewAdapter extends android.widget.BaseAdapter {
     };
 
     public getItem(i: number) {
+      
         if (this.owner && this.owner.items && i < this.owner.items.length) {
             return this.owner._getDataItem(i);
         }
@@ -329,6 +352,7 @@ export class FoldingListViewAdapter extends android.widget.BaseAdapter {
     };
 
     public getItemViewType(index: number) {
+      
         var template = this.owner._getItemTemplate(index);
         return this.owner._itemTemplatesInternal.indexOf(template);
     };
