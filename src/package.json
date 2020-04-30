@@ -1,6 +1,6 @@
 {
 	"name": "nativescript-foldingcell",
-	"version": "1.0.4",
+	"version": "1.0.5",
 	"description": "Nativescript + Ramotion FoldingCell",
 	"main": "foldingcell",
 	"typings": "index.d.ts",
