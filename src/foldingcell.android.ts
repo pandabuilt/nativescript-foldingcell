@@ -1,4 +1,4 @@
-/// <reference path="../../node_modules/tns-platform-declarations/android.d.ts" />
+/// <reference path="node_modules/tns-platform-declarations/android.d.ts" />
 /// <reference path="./typings/com.ramotion.foldingcell.d.ts" />
 
 import { Image } from '@nativescript/core/ui/image/image';

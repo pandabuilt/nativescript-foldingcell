@@ -1,4 +1,4 @@
-/// <reference path="../../node_modules/tns-platform-declarations/ios.d.ts" />
+/// <reference path="node_modules/tns-platform-declarations/ios.d.ts" />
 
 import { View } from '@nativescript/core/ui/core/view';
 import { Color } from '@nativescript/core/ui/core/view';

@@ -19,15 +19,16 @@
         "noImplicitUseStrict": false,
         "noFallthroughCasesInSwitch": true
     },
-    "include": [
-        "**/*.ts",	
+    "include":[
+        "**/*.ts",
         "!*.d.ts",
+   
     ],
     "exclude": [
-        "node_modules"
+        "node_modules",
     ],
-    "compileOnSave": false,	
-    "angularCompilerOptions": {	
-        "skipTemplateCodegen": true	
+    "compileOnSave": false,
+    "angularCompilerOptions": {
+        "skipTemplateCodegen": true
     }
 }
